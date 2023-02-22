@@ -1,7 +1,4 @@
 import React from 'react';
-import {useMutation, useQuery, useQueryClient} from "react-query";
-import {useNavigate, useParams} from "react-router-dom";
-import {fetcher} from "../../utils/fetcher";
 import {User} from "../UserTable";
 
 interface UserResponseType {
@@ -10,34 +7,8 @@ interface UserResponseType {
 }
 
 const UserDetailPage = () => {
-  const {id} = useParams();
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-
-  const {data, isLoading, isFetching, refetch} = useQuery(
-    ['users', id],
-    () => fetcher<UserResponseType>(`http://localhost:3030/users/${id}`));
-
-  // delete user using useMutation
-  const {mutate} = useMutation(
-    () => fetcher<UserResponseType>(`http://localhost:3030/users/${id}`, {
-      method: 'DELETE'
-    }),
-    {
-      onSuccess: () => {
-        navigate('/users');
-        queryClient.invalidateQueries(['users', id]);
-      }
-    }
-  );
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (isFetching) {
-    return <div>Updating...</div>;
-  }
+  // TODO: useQuery를 이용해서 user를 가져오는 로직을 작성하세요.
+  const data: UserResponseType = { user: { id: 1, email: 'sample@gmail.com', password: '1234' }, msg: '' };
 
   return (
     <div>
@@ -46,8 +17,8 @@ const UserDetailPage = () => {
         <div>ID: {data?.user.id}</div>
         <div>Email: {data?.user.email}</div>
         <div>Password: {data?.user.password}</div>
-        <button onClick={() => refetch()}>다시 가져오기</button>
-        <button onClick={() => mutate()}>삭제하기
+        <button>다시 가져오기</button>
+        <button>삭제하기
         </button>
       </div>
     </div>

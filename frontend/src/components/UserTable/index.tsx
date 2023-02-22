@@ -1,8 +1,5 @@
 import React from 'react';
-import {useInfiniteQuery} from "react-query";
 import {useNavigate} from "react-router-dom";
-import {fetcher} from "../../utils/fetcher";
-import useInfiniteScroll from "../../hooks/useInfiniteScroll";
 
 export interface UsersResponseType {
   msg: string;
@@ -19,24 +16,8 @@ export interface User {
 
 const UserTable = () => {
   const navigate = useNavigate();
-  const {data: response, isLoading, isFetching, fetchNextPage, hasNextPage} = useInfiniteQuery(['users'],
-    ({pageParam = 1}) => fetcher<UsersResponseType>(`http://localhost:3030/users?page=${pageParam}`),
-    {
-      getNextPageParam: ({hasNextPage, page}) => hasNextPage ? parseInt(page) + 1 : undefined
-    }
-  );
-
-  useInfiniteScroll(() => {
-    if (hasNextPage) fetchNextPage();
-  });
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!response) {
-    return <div>Failed to fetch data</div>;
-  }
+  // TODO: useQuery를 이용해서 users를 가져오는 로직을 작성하세요.
+  const data: UsersResponseType = { users: [], msg: '', page: '', hasNextPage: false };
 
   return (
     <div>
@@ -49,8 +30,7 @@ const UserTable = () => {
         </tr>
         </thead>
         <tbody>
-        {response.pages.map((page) => {
-          return page.users.map((user: User) => (
+        {data?.users.map((user: User) => (
             <tr key={user.id} onClick={() => {
               navigate(`/users/${user.id}`)
             }}>
@@ -58,10 +38,9 @@ const UserTable = () => {
               <td style={{display: 'table-cell', border: '1px solid black', padding: 5, cursor: 'pointer'}}>{user.email}</td>
             </tr>
           ))
-        })}
+        }
         </tbody>
       </table>
-      {isFetching && <h2>Updating...</h2>}
     </div>
   );
 };
