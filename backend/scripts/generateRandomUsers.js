@@ -27,7 +27,7 @@ const generateRandomPassword = () => {
 
 async function main() {
   // loop 100
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 1000; i++) {
     // generate random email and password
     const email = generateRandomEmail();
     const password = generateRandomPassword();

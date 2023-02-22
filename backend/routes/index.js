@@ -4,11 +4,28 @@ const {User} = require('../models');
 
 // get all users
 router.get('/', async (req, res) => {
+  const { page = 1, limit = 100 } = req.query;
+
   try {
     const users = await User.findAll();
+    const totalPages = Math.ceil(users.length / 10)
+    if (page > totalPages) {
+      return res.status(400).json({
+        msg: 'Get all users',
+        users: [],
+        page,
+        hasNextPage: false,
+      });
+    }
+    const start = (page - 1) * limit;
+    const end = start + limit;
+    const usersPerPage = users.slice(start, end);
+
     return res.json({
       msg: 'Get all users',
-      users
+      users: usersPerPage,
+      page,
+      hasNextPage: end < users.length,
     });
   } catch (err) {
     return res.status(500).json({
